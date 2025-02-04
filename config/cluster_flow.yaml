@@ -4,6 +4,12 @@ metadata:
   name: log-generator
   namespace: tpsm-logging
 spec:
+  filters:
+    - record_transformer:
+        enable_ruby: true
+        records:
+          - pod: "${record[\"kubernetes\"][\"pod_name\"]}"
+          - service: "${record[\"kubernetes\"][\"labels\"][\"app.kubernetes.io/name\"]}"
   globalOutputRefs:
     - fluentd-forwarder
   match:
