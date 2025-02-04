@@ -39,14 +39,7 @@ apiVersion: logging.banzaicloud.io/v1beta1
 kind: FluentbitAgent
 metadata:
     name: tpsm-logging
-spec:
-  inputTail:
-    storage.type: filesystem
-    Refresh_Interval: "60"
-    Rotate_Wait: "5"
-  filterKubernetes:
-    Kube_URL: "https://kubernetes.default.svc:443"
-    Match: "*"
+spec: {}
 EOF
 
 
@@ -54,6 +47,7 @@ EOF
 # Configure FluentBit filters (filter by namespace) + normalize tag
 # Forward logs to Fluentd
 kubectl apply -f ../config/cluster_flow.yaml
+kubectl apply -f ../config/clusteroutput.yaml
 
 # Installs Fluentd which is optional component and is not installed by default
 # Attach external volume and store logs
@@ -74,17 +68,17 @@ spec:
         volumeName: logs-output
 ---
 
-# This configures the Fluentd that aggregates and forwards the logs to receiver
-apiVersion: logging.banzaicloud.io/v1beta1
-kind: ClusterOutput
-metadata:
-  name: fluentd-forwarder
-  namespace: tpsm-logging
-spec:
-  file:
-    path: "/service-logs/${tag}/%Y%m%d/%H/%M.log"
-    format:
-      type: json
+## This configures the Fluentd that aggregates and forwards the logs to receiver
+#apiVersion: logging.banzaicloud.io/v1beta1
+#kind: ClusterOutput
+#metadata:
+#  name: fluentd-forwarder
+#  namespace: tpsm-logging
+#spec:
+#  file:
+#    path: "/service-logs/${tag}/%Y%m%d/%H/%M.log"
+#    format:
+#      type: json
 EOF
 
 # Create namespace tanzusm
