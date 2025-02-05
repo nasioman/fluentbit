@@ -17,18 +17,4 @@ KIND_CLUSTER_NAME="<your-kind-cluster>"
 LOGS_DIR=<dir-on-machine-where-docker-runs>
 ```
 
-```python
-./install_configure_fluentbit.sh
-```
-
-# Watch Output
-1.Select pod from the 2 nodes. Pods are scheduled - 1 per node.
-   ```
-   kubectl get pod -owide
-   ```
-2. Based on selection on step 1 navigate to $LOGS_DIR/node-worker-<1/2>
- ```
-tail -f <filename>
-```
-   
   
