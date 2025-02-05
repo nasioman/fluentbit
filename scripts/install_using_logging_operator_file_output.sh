@@ -2,8 +2,8 @@
 
 PROJECT_DIR=$(git rev-parse --show-toplevel)
 
-KIND_CLUSTER_NAME="${KIND_CLUSTER_NAME:-my-cluster}"
-LOGS_DIR="${LOGS_DIR:-/Users/tatanas/logs}"
+KIND_CLUSTER_NAME="${KIND_CLUSTER_NAME:-logging-cluster}"
+LOGS_DIR="${LOGS_DIR:-${HOME}/logs}"
 
 # Deploy kind cluster with 2 nodes and mount directory where logs are stored into host FS
 cat <<EOF | kind create cluster --name "$KIND_CLUSTER_NAME" --config -
@@ -46,8 +46,8 @@ EOF
 
 # Configure FluentBit filters (filter by namespace) + normalize tag
 # Forward logs to Fluentd
-kubectl apply -f ../config/cluster_flow.yaml
-kubectl apply -f ../config/clusteroutput.yaml
+kubectl apply -f ${PROJECT_DIR}/config/cluster_flow.yaml
+kubectl apply -f ${PROJECT_DIR}/config/clusteroutput.yaml
 
 # Installs Fluentd which is optional component and is not installed by default
 # Attach external volume and store logs

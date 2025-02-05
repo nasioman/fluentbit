@@ -2,8 +2,8 @@
 
 PROJECT_DIR=$(git rev-parse --show-toplevel)
 
-KIND_CLUSTER_NAME="${KIND_CLUSTER_NAME:-my-cluster}"
-LOGS_DIR="${LOGS_DIR:-/Users/tatanas/logs}"
+KIND_CLUSTER_NAME="${KIND_CLUSTER_NAME:-logging-cluster}"
+LOGS_DIR="${LOGS_DIR:-${HOME}/logs}"
 
 # Deploy kind cluster with 2 nodes and mount directory where logs are stored into host FS
 cat <<EOF | kind create cluster --name "$KIND_CLUSTER_NAME" --config -
