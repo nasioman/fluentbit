@@ -27,7 +27,7 @@ EOF
 # Install Logging Operator
 helm upgrade --install --wait \
      --create-namespace --namespace tpsm-logging \
-     --set testReceiver.enabled=true \
+     --set testReceiver.enabled=false \
      logging-operator oci://ghcr.io/kube-logging/helm-charts/logging-operator
 
 
@@ -47,7 +47,7 @@ EOF
 # Configure FluentBit filters (filter by namespace) + normalize tag
 # Forward logs to Fluentd
 kubectl apply -f ${PROJECT_DIR}/fluentbit_with_fluentd/config/cluster_flow.yaml
-kubectl apply -f ${PROJECT_DIR}/fluentbit_with_fluentd/config/clusteroutput.yaml
+kubectl apply -f ${PROJECT_DIR}/fluentbit_with_fluentd/config/cluster_output.yaml
 
 # Installs Fluentd which is optional component and is not installed by default
 # Attach external volume and store logs
@@ -75,7 +75,17 @@ kubectl create namespace tanzusm
 
 
 # Deploy log generator application
-helm upgrade --install --wait --namespace tanzusm log-generator oci://ghcr.io/kube-logging/helm-charts/log-generator
+#helm upgrade --install --wait --namespace tanzusm log-generator oci://ghcr.io/kube-logging/helm-charts/log-generator
+#
+
+helm upgrade --install --wait --namespace tanzusm log-generator \
+  oci://ghcr.io/kube-logging/helm-charts/log-generator \
+  --set replicaCount=2 \
+  --set affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].labelSelector.matchExpressions[0].key=k8s-app \
+  --set affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].labelSelector.matchExpressions[0].operator=In \
+  --set affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].labelSelector.matchExpressions[0].values[0]=log-generator \
+  --set affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].topologyKey=kubernetes.io/hostname
+
 
 #https://github.com/fluent/fluent-bit/issues/7109?utm_source=chatgpt.com
 

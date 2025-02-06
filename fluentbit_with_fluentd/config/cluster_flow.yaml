@@ -10,6 +10,8 @@ spec:
         records:
           - pod: "${record[\"kubernetes\"][\"pod_name\"]}"
           - service: "${record[\"kubernetes\"][\"labels\"][\"app.kubernetes.io/name\"]}"
+    - tag_normaliser:
+        format: ${pod_name}.${container_name}
   globalOutputRefs:
     - fluentd-forwarder
   match:

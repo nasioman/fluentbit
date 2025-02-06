@@ -1,0 +1,25 @@
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterOutput
+metadata:
+  name: fluentd-forwarder
+  namespace: tpsm-logging
+spec:
+  file:
+    path: "/service-logs/${service}/${tag}"
+    append: true
+    buffer:
+      tags: service,tag ,time
+      # Add a max size for the buffer to prevent flooding the file system. The defaults (256MB max chunk size, 64 GB max buffer size) are a bit too much
+      chunk_limit_size: 16m
+      total_limit_size: 1g
+      overflow_action: drop_oldest_chunk
+
+      # Restrict the maximum number of file chunks in order to avoid exhausting the available file descriptors for the process.
+      # Have in mind that actual files are twice more (as there is a meta file for each chunk)
+      queued_chunks_limit_size: 150
+      flush_mode: interval
+      flush_interval: 1s
+    format:
+      type: single_value
+      add_newline: true
+      message_key: message
